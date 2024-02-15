@@ -35,6 +35,9 @@ After successfully building Ymir, you can use just use the executable that was j
 sudo make install
 ~~~
 
+## GUI: How To Build? 
+As for the GUI version of Ymir, there's a little bit of work on your end. Specifically, you need to get GLFW as Ymir depends on it to create a window and such. Ymir also use GLAD and ImGui but you don't have to worry about those since Ymir handles them for you. Once you've installed GLFW and put it somewhere CMake can find, you only have to build Ymir and cross your fingers that nothing happens. If you get any linking errors make sure that you linked GLFW correctly and that CMake found it in the first place. However, if there are any issues then you can contact me directly on here or anywhere else I'm available. The same commands for compiling the CLI version should work for the GUI version as well.
+
 # Uses
 As mentioned before, Ymir has two versions you can use: the CLI version and the GUI version. Both offer the same functionality but both differ in visual terms. You can use either. Whatever suits you best. However, do keep in mind that the GUI version is naturally more bloated since it has to deal with GLFW, ImGui, and OpenGL. So if you do prefer something more lightweight but a little bit harder to work with then use the CLI version. But if you don't mind being a little heavy then use the GUI version. Below are examples of both versions.
 
@@ -49,8 +52,8 @@ In order to create a project with Ymir-CLI, there are two *very* essential and *
  --deps    -L = Folder to hold all external dependencies (default = libs)
  --scripts    = Should this project have utility scripts? (0 = yes, 1 = no)
  --cpp     -V = C++ version this project will use (default = 17)
- --flags   -F = Extra compiler flags
- --defs    -D = Extra project definitions
+ --flags   -F = Extra compiler flags (NOTE: put the falgs inside \"\")
+ --defs    -D = Extra project definitions (NOTE: put the defs inside \"\")
  --type    -T = Type of this project (PROJ_TYPE_EXEC or PROJE_TYPE_LIB; default = PROJ_TYPE_EXEC)
 ~~~
 
@@ -63,11 +66,13 @@ ymir /home/ymir-dev/Dev/C++ new_project
 
 ~~~
 # Specifying some extra commands 
-ymir /home/ymir-dev/Dev/C++ new_project --cpp 20 --type PROJ_TYPE_LIB --flags -Wall
+ymir /home/ymir-dev/Dev/C++ new_project --cpp 20 --type PROJ_TYPE_LIB --flags "-Wall -lm" --defs "GLFW_INCLUDE_NONE OTHER_DEF"
 ~~~
 
 ## GUI: How to Use? 
-TODO
+The GUI version is the simplest to use. After you have compiled and built Ymir-GUI successfully, you should be able to run the `ymir-gui` executable produced and a window should popup with a very simple UI. That's all the UI Ymir offers at the moment. Perhaps there could be extra functionality in the future. But, for now, that is all that is available. Below you can see a picture of the UI.
 
 ## GUI: Example  
-TODO
+![GUI-Screenshot](assets/gui_screenshot.png)
+
+As you can see, the UI is very simple and does not really have any hidden functionality. What you see is what you get. However, please make sure that you input the correct path and make sure to read the instructions given on the tooltips if you are ever confused. If you hover over any of the options/inputs you should see a note telling you what to input and what remarks you should know about.
