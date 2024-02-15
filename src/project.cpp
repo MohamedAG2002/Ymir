@@ -167,8 +167,8 @@ void project_show_cli_help()
   printf("  --deps    -L = Folder to hold all external dependencies (default = libs)\n");
   printf("  --scripts    = Should this project have utility scripts? (0 = yes, 1 = no)\n");
   printf("  --cpp     -V = C++ version this project will use (default = 17)\n");
-  printf("  --flags   -F = Extra compiler flags\n");
-  printf("  --defs    -D = Extra project definitions\n");
+  printf("  --flags   -F = Extra compiler flags (NOTE: put the falgs inside \"\")\n");
+  printf("  --defs    -D = Extra project definitions (NOTE: put the defs inside \"\")\n");
   printf("  --type    -T = Type of this project (PROJ_TYPE_EXEC or PROJE_TYPE_LIB; default = PROJ_TYPE_EXEC)\n");
 }
 
