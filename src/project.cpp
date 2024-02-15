@@ -2,17 +2,16 @@
 
 #include <cstdio>
 #include <string>
-#include <vector>
 #include <fstream>
 #include <filesystem>
 
 // Private functions
 ///////////////////////////////////////////////////////////////////
-static void construct_cmake_file(project_t& proj)
+static void construct_cmake_file(project_desc_t& proj)
 {
-  std::fstream file(proj.full_path + "CMakeLists.txt", std::ios::out);
+  std::fstream file((proj.path + proj.name + '/') + "CMakeLists.txt", std::ios::out);
   if(!file.is_open())
-    printf("ERROR: Could not create CMakeLists file in directory \'%s\'", proj.full_path.c_str());
+    printf("ERROR: Could not create CMakeLists file in directory \'%s\'", (proj.path + proj.name + '/').c_str());
 
   std::string source_file, proj_type;
 
@@ -36,9 +35,9 @@ static void construct_cmake_file(project_t& proj)
   file.close();
 }
 
-static void construct_basic_cpp(project_t& proj)
+static void construct_basic_cpp(project_desc_t& proj)
 {
-  std::fstream file(proj.src_folder + '/' + "main.cpp", std::ios::out);
+  std::fstream file((proj.path + proj.name + '/') + proj.src_folder + '/' + "main.cpp", std::ios::out);
   if(!file.is_open())
     printf("ERROR: Could not create cpp file in directory \'%s\'", proj.src_folder.c_str());
 
@@ -48,10 +47,10 @@ static void construct_basic_cpp(project_t& proj)
   file.close();
 }
   
-static void construct_shell_scripts(project_t& proj)
+static void construct_shell_scripts(project_desc_t& proj)
 {
-  std::filesystem::create_directory(proj.full_path + "scripts");
-  std::fstream file(proj.full_path + "scripts/" + "build_and_run.sh", std::ios::out);
+  std::filesystem::create_directory((proj.path + proj.name + '/') + "scripts");
+  std::fstream file((proj.path + proj.name + '/') + "scripts/" + "build_and_run.sh", std::ios::out);
   if(!file.is_open())
     printf("ERROR: Could not create cpp file in directory \'%s\'", proj.src_folder.c_str());
 
@@ -173,50 +172,31 @@ void project_show_cli_help()
   printf("  --type    -T = Type of this project (PROJ_TYPE_EXEC or PROJE_TYPE_LIB; default = PROJ_TYPE_EXEC)\n");
 }
 
-project_t  project_create(const project_desc_t& desc)
+void project_create(project_desc_t& proj)
 {
-  // Project init
-  project_t proj; 
-  proj.path             = desc.path;
-  proj.name             = desc.name;
-  proj.full_path        = proj.path + proj.name + '/';
-  proj.src_folder       = proj.full_path + desc.src_folder;
-  proj.header_folder    = proj.full_path + desc.header_folder;
-  proj.deps_folder      = proj.full_path + desc.deps_folder;
-  proj.has_scripts      = desc.has_scripts;
-  proj.cpp_version      = desc.cpp_version;
-  proj.compiler_flags   = desc.compiler_flags; 
-  proj.compiler_defines = desc.compiler_defines; 
-  proj.type             = desc.type;
+  std::string full_path = (proj.path + proj.name + '/');
 
   // Create project directory
   printf("Creating the root directory...\n"); 
-  std::filesystem::create_directory(proj.full_path);
+  std::filesystem::create_directory(full_path);
 
   // Create some important directories
   printf("Creating a src folder...\n");
-  std::filesystem::create_directory(proj.src_folder);
+  std::filesystem::create_directory(full_path + proj.src_folder);
 
   // The header files can either be in the src folder or 
   // in their own folder
-  if(proj.header_folder == proj.src_folder)
+  if(proj.header_folder != proj.src_folder)
   {
     printf("Creating a header folder...\n");
-    std::filesystem::create_directory(proj.header_folder);
+    std::filesystem::create_directory(full_path + proj.header_folder);
   }
   
   printf("Creating a dependencies folder...\n");
-  std::filesystem::create_directory(proj.deps_folder);
+  std::filesystem::create_directory(full_path + proj.deps_folder);
   
   printf("Creating a build folder...\n");
-  std::filesystem::create_directory(proj.full_path + "build");
-
-  // Create the extra directories specified
-  for(auto& folder : proj.extra_folders)
-  {
-    printf("Creating extra folders...\n");
-    std::filesystem::create_directory(proj.full_path + folder);
-  }
+  std::filesystem::create_directory(full_path + "build");
 
   // Creating the CMakeLists.txt file 
   printf("Configuring CMake...\n");
@@ -232,18 +212,16 @@ project_t  project_create(const project_desc_t& desc)
     printf("Writing some useful scripts...\n");
     construct_shell_scripts(proj);
   }
-
-  return proj;
 }
 
-project_t project_create_cli(int argc, char** argv)
+void project_create_cli(int argc, char** argv)
 {
   if(argc < 3)
   {
     printf("ERROR: Not enough arguments given\n");
     project_show_cli_help();
-
-    return project_t{};
+  
+    return;
   }
 
   // Giving the project default values
@@ -263,13 +241,7 @@ project_t project_create_cli(int argc, char** argv)
   for(int i = 3; i < argc; i += 2)
     check_commands(i, argv, desc);
 
-  return project_create(desc);
-}
-
-void project_add_dir(project_t& proj, const std::string& dir_name)
-{
-  proj.extra_folders.push_back(dir_name);
-  std::filesystem::create_directory(proj.path + proj.name + '/' + dir_name);
+  project_create(desc);
 }
 ///////////////////////////////////////////////////////////////////
 

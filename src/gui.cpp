@@ -9,13 +9,31 @@
 #include <imgui/imgui_impl_opengl3_loader.h>
 
 #include <cstdio>
+#include <cstring>
 
 // Globals
+// MY EYES!!!! OH MY EYES!!!! WHAT A HORRIBLE THING TO WITNESS!!!!!
 ////////////////////////////////////////////////////
 static GLFWwindow* s_window = nullptr;
 static const int WINDOW_WIDTH = 1280; 
 static const int WINDOW_HEIGHT = 720;
-////////////////////////////////////////////////////
+
+static char path[128]       = "/absolute/path/to/project/";
+static char name[64]        = "ProjectName";
+static char src_dir[24]     = "src";
+static char header_dir[24]  = "src";
+static char deps_dir[32]    = "libs";
+static bool has_scripts     = true;
+static int  cpp_version     = 20;
+static char comp_flags[128] = "-Wall -lm";
+static char comp_defs[128]  = "NO_DEFS";
+
+static const char* types[2] = {"Library", "Executable"};
+static int current_type = 0;
+  
+static ImGuiWindowFlags win_flags = 0;
+//////////////////////////////////////////////////////////
+
 
 // Callbacks
 ////////////////////////////////////////////////////
@@ -98,24 +116,19 @@ static bool init_imgui()
   return true;
 }
 
-// MY EYES!!!! OH MY EYES!!!! WHAT A HORRIBLE THING TO WITNESS!!!!!
-//////////////////////////////////////////////////////////
-static char path[128]       = "/absolute/path/to/project/";
-static char name[64]        = "ProjectName";
-static char src_dir[24]     = "src";
-static char header_dir[24]  = "src";
-static char deps_dir[32]    = "libs";
-static bool has_scripts     = true;
-static int  cpp_version     = 20;
-static char comp_flags[128] = "-Wall -lm";
-static char comp_defs[128]  = "NO_DEFS";
-
-static const char* types[2] = {"Executable", "Library"};
-static int current_type = 0;
-  
-// Setting window flags 
-static ImGuiWindowFlags win_flags = 0;
-//////////////////////////////////////////////////////////
+static void reset_values()
+{
+  strcpy(path, "/absolute/path/to/project/");
+  strcpy(name, "ProjectName");
+  strcpy(src_dir, "src");
+  strcpy(header_dir, "src");
+  strcpy(deps_dir, "libs");
+  strcpy(comp_flags, "-Wall -lm");
+  strcpy(comp_defs, "NO_DEFS");
+ 
+  has_scripts     = true;
+  cpp_version     = 20;
+}
 
 static void project_setting_panel(project_desc_t& desc)
 {
@@ -128,19 +141,35 @@ static void project_setting_panel(project_desc_t& desc)
 
   ImGui::SeparatorText("Project Settings");
   ImGui::InputText("Path", path, 128);
+  ImGui::SetItemTooltip("Don't forget to add a \'/\' at the end of the path. \nNOTE: Leave out the name of the project");
+
   ImGui::InputText("Name", name, 64);
-  ImGui::InputText("Source Folder", src_dir, 24);
-  ImGui::InputText("Header Folder", header_dir, 24);
-  ImGui::InputText("External Libraries Folder", deps_dir, 32);
-  ImGui::Combo("Project Type", &current_type, types, 2);
+  ImGui::SetItemTooltip("Remember to leave out spaces in the name as this will also be used as the name of executable/library produced");
+  
+  ImGui::InputText("Source folder", src_dir, 24);
+  ImGui::SetItemTooltip("The home of all of the .cpp files. Its \'src\' by default");
+  
+  ImGui::InputText("Header folder", header_dir, 24);
+  ImGui::SetItemTooltip("The header files will be included in the src folder if left unchanched");
+
+  ImGui::InputText("External libraries folder", deps_dir, 32);
+  ImGui::SetItemTooltip("A file that will house all of the external dependencies you will bring");
+  
+  ImGui::Combo("Type", &current_type, types, 2);
+  ImGui::SetItemTooltip("Is the project an executable or a library?");
 
   ImGui::SeparatorText("\nCompiler Settings");
   ImGui::InputText("Flags", comp_flags, 128);
+  ImGui::SetItemTooltip("Remember to leave spaces between the flags");
+  
   ImGui::InputText("Definitions", comp_defs, 128);
+  ImGui::SetItemTooltip("Remember to leave spaces between the definitions");
+  
   ImGui::SliderInt("C++ Version", &cpp_version, 11, 23);
   
   ImGui::SeparatorText("\nExtra Settings");
   ImGui::Checkbox("Utility Scripts", &has_scripts);
+  ImGui::SetItemTooltip("Do you want to include some utility shell scripts to help compiling and running the project?");
     
   // @TODO: Do other things when the project has been created
   ImGui::Text("\n"); 
@@ -158,6 +187,8 @@ static void project_setting_panel(project_desc_t& desc)
     desc.type = (project_type_e)current_type;
     
     project_create(desc);
+  
+    reset_values();
   }
   
   ImGui::End();

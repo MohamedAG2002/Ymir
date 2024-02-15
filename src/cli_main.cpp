@@ -10,6 +10,6 @@ int main(int argc, char** argv)
     return 0;
   }
 
-  project_t proj =  project_create_cli(argc, argv);
+  project_create_cli(argc, argv);
   return 0;
 }
