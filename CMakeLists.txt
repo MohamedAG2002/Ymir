@@ -44,4 +44,4 @@ target_compile_features(ymir-gui PUBLIC cxx_std_20)
 file(COPY assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # Will install the project to be able to be used as a CLI command
-install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+install(TARGETS ${PROJECT_NAME} ymir-gui DESTINATION bin)
