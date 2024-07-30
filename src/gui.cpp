@@ -132,10 +132,7 @@ static void reset_values()
 
 static void project_setting_panel(project_desc_t& desc)
 {
-  win_flags |= ImGuiWindowFlags_NoResize;
-  win_flags |= ImGuiWindowFlags_NoMove;
   win_flags |= ImGuiWindowFlags_NoTitleBar; 
-  win_flags |= ImGuiWindowFlags_NoCollapse; 
   
   ImGui::Begin("YMIR", nullptr, win_flags);
 
