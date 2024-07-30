@@ -26,7 +26,7 @@ static void construct_cmake_file(project_desc_t& proj)
   source_file += "project(" + proj.name + ")\n\n";
   source_file += "set(PROJ_SOURCES src/main.cpp)\n\n";
   source_file += proj_type;
-  source_file += "target_compile_definitions(${PROJECT_NAME} PRIVATE " + proj.compiler_defines + ")\n";
+  source_file += "\ntarget_compile_definitions(${PROJECT_NAME} PRIVATE " + proj.compiler_defines + ")\n";
   source_file += "target_compile_options(${PROJECT_NAME} PRIVATE " + proj.compiler_flags + ")\n";
   source_file += "target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_" + std::to_string(proj.cpp_version) + ")\n";
 
@@ -41,7 +41,7 @@ static void construct_basic_cpp(project_desc_t& proj)
   if(!file.is_open())
     printf("ERROR: Could not create cpp file in directory \'%s\'", proj.src_folder.c_str());
 
-  std::string source_cpp = "#include<iostream>\n\nint main() {\n   std::cout << \"Hello, world\\n\"; \n}";
+  std::string source_cpp = "#include <iostream>\n\nint main() {\n   std::cout << \"Hello, world\\n\"; \n}";
   file << source_cpp;
 
   file.close();
@@ -165,7 +165,7 @@ void project_show_cli_help()
   printf("  --src     -S = Folder to hold all of the .cpp files (default = src)\n");
   printf("  --header  -H = Folder to hold all of  the .h/.hpp files (default = src)\n");
   printf("  --deps    -L = Folder to hold all external dependencies (default = libs)\n");
-  printf("  --scripts    = Should this project have utility scripts? (0 = yes, 1 = no)\n");
+  printf("  --scripts    = Should this project have utility scripts? (1 = yes, 0 = no)\n");
   printf("  --cpp     -V = C++ version this project will use (default = 17)\n");
   printf("  --flags   -F = Extra compiler flags (NOTE: put the falgs inside \"\")\n");
   printf("  --defs    -D = Extra project definitions (NOTE: put the defs inside \"\")\n");
